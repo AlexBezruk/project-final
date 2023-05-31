@@ -31,4 +31,10 @@ public class TaskService extends BugtrackingService<Task, TaskTo, TaskRepository
         task.getTags().removeAll(tags);
         repository.save(task);
     }
+
+    public void changeStatus(Long id, String statusCode) {
+        Task task = repository.getExisted(id);
+        task.setStatusCode(statusCode);
+        repository.save(task);
+    }
 }

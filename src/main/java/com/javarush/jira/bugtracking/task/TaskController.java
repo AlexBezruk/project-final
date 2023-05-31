@@ -1,28 +1,49 @@
 package com.javarush.jira.bugtracking.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.javarush.jira.bugtracking.internal.taskchangestatuscode.TaskChangeStatusCodeEvent;
+import com.javarush.jira.bugtracking.userBelong.UserBelongService;
+import com.javarush.jira.login.User;
+import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = TaskController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class TaskController {
     static final String REST_URL = "/api/bugtracking/task";
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
+    private final UserBelongService userBelongService;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/{id}")
-    public String addTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
         taskService.addTags(taskId, Set.of(tags));
-        return "redirect:/";
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
         taskService.deleteTags(taskId, Set.of(tags));
-        return "redirect:/";
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeStatus(@PathVariable("id") Long taskId, @RequestBody String statusCode) {
+        taskService.changeStatus(taskId, statusCode);
+
+        List<User> subscribers = userBelongService.getSubscribers(taskId);
+
+        if (!subscribers.isEmpty()) {
+            eventPublisher.publishEvent(new TaskChangeStatusCodeEvent(subscribers));
+        }
     }
 }
