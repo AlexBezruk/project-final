@@ -1,6 +1,5 @@
-package com.javarush.jira.bugtracking.task;
+package com.javarush.jira.bugtracking;
 
-import com.javarush.jira.bugtracking.BugtrackingService;
 import com.javarush.jira.bugtracking.internal.mapper.TaskMapper;
 import com.javarush.jira.bugtracking.internal.model.Task;
 import com.javarush.jira.bugtracking.internal.repository.TaskRepository;
@@ -12,8 +11,8 @@ import java.util.Set;
 
 @Service
 public class TaskService extends BugtrackingService<Task, TaskTo, TaskRepository> {
-    public TaskService(TaskRepository repository, TaskMapper mapper) {
-        super(repository, mapper);
+    public TaskService(TaskRepository taskRepository, TaskMapper mapper) {
+        super(taskRepository, mapper);
     }
 
     public List<TaskTo> getAll() {

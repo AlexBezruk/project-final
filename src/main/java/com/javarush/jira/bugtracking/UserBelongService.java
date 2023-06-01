@@ -1,4 +1,4 @@
-package com.javarush.jira.bugtracking.userBelong;
+package com.javarush.jira.bugtracking;
 
 import com.javarush.jira.bugtracking.internal.model.Task;
 import com.javarush.jira.bugtracking.internal.model.UserBelong;
@@ -38,7 +38,7 @@ public class UserBelongService {
 
     public List<User> getSubscribers(Long taskId) {
         List<UserBelong> subscribersUserBelong = userBelongRepository
-                .getUserBelongsByObjectIdAndUserTypeCode(taskId, "subscriber");
+                .getUserBelongsByObjectIdAndUserTypeCodeAndObjectType(taskId, "subscriber", ObjectType.TASK);
 
         return subscribersUserBelong.stream()
                 .map(UserBelong::getUserId)

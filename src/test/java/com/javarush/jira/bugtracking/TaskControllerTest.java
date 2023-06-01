@@ -1,4 +1,4 @@
-package com.javarush.jira.bugtracking.task;
+package com.javarush.jira.bugtracking;
 
 import com.javarush.jira.AbstractControllerTest;
 import com.javarush.jira.bugtracking.internal.mapper.TaskMapper;
@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.javarush.jira.bugtracking.task.TaskController.REST_URL;
+import static com.javarush.jira.bugtracking.TaskController.REST_URL;
 import static com.javarush.jira.common.util.JsonUtil.writeValue;
 import static com.javarush.jira.login.internal.web.UserTestData.USER_MAIL;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ class TaskControllerTest extends AbstractControllerTest {
     void addTags() throws Exception {
         Set<String> tags = Set.of("frontend", "backend");
 
-        perform(MockMvcRequestBuilders.post(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(tags)))
                 .andDo(print())
@@ -47,13 +47,13 @@ class TaskControllerTest extends AbstractControllerTest {
         Set<String> tags = Set.of("frontend", "backend", "none");
         Set<String> deleteTags = Set.of("frontend", "backend");
 
-        perform(MockMvcRequestBuilders.post(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(tags)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(deleteTags)))
                 .andDo(print())
@@ -68,13 +68,13 @@ class TaskControllerTest extends AbstractControllerTest {
         Set<String> tags = Set.of("frontend", "backend", "none");
         Set<String> deleteTags = Set.of("abracadabra");
 
-        perform(MockMvcRequestBuilders.post(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.patch(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(tags)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(deleteTags))).andDo(print())
                 .andExpect(status().isNoContent());
@@ -87,7 +87,7 @@ class TaskControllerTest extends AbstractControllerTest {
     void deleteFromEmptyTags() throws Exception {
         Set<String> deleteTags = Set.of("frontend", "backend", "none");
 
-        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID)
+        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + TASK_ID + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(deleteTags)))
                 .andDo(print())

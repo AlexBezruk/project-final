@@ -1,12 +1,13 @@
-package com.javarush.jira.bugtracking.task;
+package com.javarush.jira.bugtracking;
 
 import com.javarush.jira.bugtracking.internal.taskchangestatuscode.TaskChangeStatusCodeEvent;
-import com.javarush.jira.bugtracking.userBelong.UserBelongService;
+import com.javarush.jira.login.AuthUser;
 import com.javarush.jira.login.User;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,19 +24,25 @@ public class TaskController {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}/tags")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
         taskService.addTags(taskId, Set.of(tags));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/tags")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTags(@PathVariable("id") Long taskId, @RequestBody String[] tags) {
         taskService.deleteTags(taskId, Set.of(tags));
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}/subscriber")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addSubscriber(@PathVariable("id") Long taskId, @AuthenticationPrincipal AuthUser authUser) {
+        userBelongService.addSubscriber(taskId, authUser.id());
+    }
+
+    @PatchMapping("/{id}/statusCode")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeStatus(@PathVariable("id") Long taskId, @RequestBody String statusCode) {
         taskService.changeStatus(taskId, statusCode);
