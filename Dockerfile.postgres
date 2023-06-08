@@ -1,3 +1,0 @@
-FROM postgres:13
-COPY ./target/classes/db/changelog.sql /docker-entrypoint-initdb.d/changelog.sql
-EXPOSE 5432
