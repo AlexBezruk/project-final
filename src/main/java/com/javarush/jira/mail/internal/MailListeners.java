@@ -1,5 +1,6 @@
 package com.javarush.jira.mail.internal;
 
+import com.javarush.jira.bugtracking.internal.taskchangestatuscode.TaskChangeStatusCodeEvent;
 import com.javarush.jira.common.config.AppProperties;
 import com.javarush.jira.login.User;
 import com.javarush.jira.login.internal.UserMapper;
@@ -30,5 +31,10 @@ public class MailListeners {
     public void resetPassword(PasswordResetEvent event) {
         String resetUrl = appProperties.getHostUrl() + "/ui/password/change?token=" + event.token();
         mailService.sendToUserAsync("password-reset.html", event.user(), Map.of("resetUrl", resetUrl));
+    }
+
+    @EventListener
+    public void changeStatusCode(TaskChangeStatusCodeEvent event) {
+
     }
 }
